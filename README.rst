@@ -1,7 +1,7 @@
 AioScrape
 =========
 
-A scraping library on top of aiohttp and `parsechain <https://github.com/Suor/parsechain>`_. Note that this is **alpha** software.
+A scraping library on top of `aiohttp <https://aiohttp.readthedocs.io>`_ and `parsechain <https://github.com/Suor/parsechain>`_. Note that this is **alpha** software.
 
 
 Installation
