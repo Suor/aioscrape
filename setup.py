@@ -18,9 +18,10 @@ setup(
         'aiohttp>=3.5.4'
         'parsechain',
         'funcy>=1.11,<2.0',
-        # 'aiocache',
-        # 'aiofilecache'
     ],
+    extras_require={
+        'cache': ['aiocache', 'aiofilecache'],
+    },
     packages=['aioscrape'],
 
     classifiers=[
