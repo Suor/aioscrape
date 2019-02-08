@@ -75,6 +75,5 @@ TODO
 ----
 
 - Response.follow()
-- Response.abs()
 - non-GET requests
 - work with forms
