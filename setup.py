@@ -16,6 +16,7 @@ setup(
 
     install_requires=[
         'aiohttp>=3.5.4'
+        'aiocontextvars;python_version<"3.7"',
         'parsechain',
         'funcy>=1.11,<2.0',
     ],

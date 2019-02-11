@@ -1,13 +1,13 @@
+import sys
+if sys.version_info < (3, 7):
+    import aiocontextvars
+
 from inspect import signature
 from contextlib import contextmanager
 from contextvars import ContextVar
 import aiohttp
 import asyncio
 
-try:
-    import aiocontextvars
-except ImportError:
-    pass
 from funcy import compose, decorator, project, merge
 from parsechain import Response
 
