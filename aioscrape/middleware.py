@@ -2,7 +2,12 @@ from funcy import decorator
 
 
 @decorator
-async def last_fetch(call):
+async def log_fetch(call, print_func=print):
+    print_func('FETCH ' + call.url)
+    return await call()
+
+
+@decorator
 async def last_fetch(call, filename):
     result = await call()
     with open(filename, 'w') as f:

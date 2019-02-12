@@ -68,7 +68,6 @@ compose_wrap.cache = {}
 
 @compose_wrap('middleware')
 async def fetch(url, *, headers=None):
-    print('REAL FETCH', url)
     session = SESSION.get()
     async with session.get(url, headers=headers) as response:
         body = await response.text()
