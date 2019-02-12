@@ -1,15 +1,16 @@
-from pathlib import Path
 from funcy import decorator
 
 
 @decorator
 async def last_fetch(call):
+async def last_fetch(call, filename):
     result = await call()
-    Path('last_fetch.html').write_text(result.body)
+    with open(filename, 'w') as f:
+        f.write(result.body)
     return result
 
 
-def make_filecache(basedir):
+def filecache(basedir):
     # Import from here since these are optional dependencies
     from aiocache import cached
     from aiocache.serializers import PickleSerializer
