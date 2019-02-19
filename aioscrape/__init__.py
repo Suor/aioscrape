@@ -76,3 +76,7 @@ async def fetch(url, *, headers=None):
             status=response.status, reason=response.reason,
             headers=dict(response.headers)
         )
+
+
+def fetchall(urls):
+    return asyncio.gather(*map(fetch, urls))
