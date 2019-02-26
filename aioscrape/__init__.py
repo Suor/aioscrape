@@ -34,6 +34,9 @@ def settings(**values):
         SETTINGS.reset(token)
 
 
+settings.get = lambda param, default: SETTINGS.get().get(param, default)
+
+
 async def with_session(coro):
     """
     Automatically creates aiohttp session around coro.
@@ -55,7 +58,7 @@ async def with_session(coro):
 
 @decorator
 def compose_wrap(call, param):
-    middleware = SETTINGS.get().get(param, [])
+    middleware = settings.get(param, [])
     key = tuple(middleware) + (call._func,)
     try:
         composed = compose_wrap.cache[key]
