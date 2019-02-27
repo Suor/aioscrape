@@ -12,6 +12,9 @@ from funcy import compose, decorator, project, merge
 from parsechain import Response
 
 
+__all__ = ['settings', 'run', 'fetch', 'fetchall', 'save']
+
+
 # Used to store dynamically scoped settings, part of them are session keyword params
 SETTINGS = ContextVar('settings', default={})
 SESSION = ContextVar('session')
@@ -83,3 +86,10 @@ async def fetch(url, *, headers=None):
 
 def fetchall(urls):
     return asyncio.gather(*map(fetch, urls))
+
+
+# This is a glorified hook with a predefined name,
+# serves the purpose of separating scraping code from record processing one.
+# Will work with both async and sync save, not sure whether this is a good thing.
+def save(record):
+    return settings.get('save')(record)
