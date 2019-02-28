@@ -37,7 +37,7 @@ def settings(**values):
         SETTINGS.reset(token)
 
 
-settings.get = lambda param, default: SETTINGS.get().get(param, default)
+settings.get = lambda param, default=None: SETTINGS.get().get(param, default)
 
 
 async def with_session(coro):
