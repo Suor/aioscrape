@@ -78,7 +78,7 @@ async def fetch(url, *, headers=None):
     async with session.get(url, headers=headers) as response:
         body = await response.text()
         return Response(
-            method=response.method, url=url, body=body,
+            method=response.method, url=str(response.url), body=body,
             status=response.status, reason=response.reason,
             headers=dict(response.headers)
         )
