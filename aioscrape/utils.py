@@ -5,5 +5,5 @@ SOME_HEADERS = {
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
     'DNT': '1',
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36',
+    'User-Agent': 'Mozilla/5.1 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/72.0.3282.186 Safari/537.36',
 }
