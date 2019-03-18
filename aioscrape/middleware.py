@@ -40,7 +40,7 @@ async def retry(call, tries=10, errors=RERTRY_ERRORS, timeout=60, on_error=None)
         except errors as e:
             if on_error:
                 message = f'{e.__class__.__name__}: {e}' if str(e) else e.__class__.__name__
-                on_error(f'Failed with {message}, retrying {attempt + 1}/{tries}...', error=e)
+                on_error(f'Failed with {message}, retrying {attempt + 1}/{tries}...')
             # Reraise error on last attempt
             if attempt + 1 == tries:
                 raise
