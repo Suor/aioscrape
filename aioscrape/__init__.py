@@ -90,6 +90,6 @@ def fetchall(urls):
 
 # This is a glorified hook with a predefined name,
 # serves the purpose of separating scraping code from record processing one.
-# Will work with both async and sync save, not sure whether this is a good thing.
+# TODO: make this async only
 def save(record):
     return settings.get('save')(record)
