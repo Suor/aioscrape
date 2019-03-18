@@ -22,4 +22,4 @@ def filecache(basedir):
     from aiofilecache import FileCache
 
     return cached(cache=FileCache, serializer=PickleSerializer(),
-                  basedir=basedir)
+                  basedir=basedir, timeout=None)
