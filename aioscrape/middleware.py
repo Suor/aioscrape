@@ -1,3 +1,5 @@
+import asyncio
+
 from funcy import decorator
 from aiohttp.client_exceptions import ClientError
 
