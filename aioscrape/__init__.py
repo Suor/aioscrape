@@ -84,6 +84,7 @@ async def fetch(url, *, headers=None):
         )
 
 
+# TODO: make an async generator?
 def fetchall(urls):
     return asyncio.gather(*map(fetch, urls))
 
