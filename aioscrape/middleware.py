@@ -2,6 +2,7 @@ import asyncio
 
 from funcy import decorator
 from aiohttp.client_exceptions import ClientError
+import aioscrape
 
 
 @decorator
@@ -28,10 +29,20 @@ def filecache(basedir):
                   basedir=basedir, timeout=None)
 
 
+class ValidateError(Exception):
+    pass
 
 @decorator
+async def validate(call, validator=None):
+    result = await call()
+    validator = aioscrape.settings.get('validator')
+    if validator and not validator(result):
+        raise ValidateError
+    return result
+
+
 RETRY_CODES = {503}
-RETRY_ERRORS = (ClientError, asyncio.TimeoutError)
+RETRY_ERRORS = (ClientError, asyncio.TimeoutError, ValidateError)
 
 class RetryCode(Exception):
     pass
