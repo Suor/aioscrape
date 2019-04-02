@@ -28,17 +28,28 @@ def filecache(basedir):
                   basedir=basedir, timeout=None)
 
 
-RERTRY_ERRORS = (ClientError, asyncio.TimeoutError)
 
 @decorator
-async def retry(call, tries=10, errors=RERTRY_ERRORS, timeout=60, on_error=None):
+RETRY_CODES = {503}
+RETRY_ERRORS = (ClientError, asyncio.TimeoutError)
+
+class RetryCode(Exception):
+    pass
+
+@decorator
+async def retry(call, tries=10, codes=RETRY_CODES, errors=RETRY_ERRORS, timeout=60, on_error=None):
     """Makes decorated function retry up to tries times.
        Retries only on specified errors.
        Sleeps timeout or timeout(attempt) seconds between tries."""
     errors = _ensure_exceptable(errors)
+    if codes:
+        errors += (RetryCode,)
     for attempt in range(tries):
         try:
-            return await call()
+            res = await call()
+            if res.status in codes:
+                raise RetryCode(res.message)
+            return res
         except errors as e:
             if on_error:
                 message = f'{e.__class__.__name__}: {e}' if str(e) else e.__class__.__name__
@@ -51,8 +62,10 @@ async def retry(call, tries=10, errors=RERTRY_ERRORS, timeout=60, on_error=None)
                 if timeout_value > 0:
                     await asyncio.sleep(timeout_value)
 
+
 def _ensure_exceptable(errors):
     """Ensures that errors are passable to except clause.
        I.e. should be BaseException subclass or a tuple."""
     is_exception = isinstance(errors, type) and issubclass(errors, BaseException)
-    return errors if is_exception else tuple(errors)
+    return (errors,) if is_exception else tuple(errors)
+
