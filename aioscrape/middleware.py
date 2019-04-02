@@ -80,3 +80,32 @@ def _ensure_exceptable(errors):
     is_exception = isinstance(errors, type) and issubclass(errors, BaseException)
     return (errors,) if is_exception else tuple(errors)
 
+
+from collections import defaultdict
+from urllib.parse import urlparse
+
+@decorator
+async def limit(call, concurrency=None, per_domain=None):
+    domain = urlparse(call.url).netloc
+
+    if not hasattr(call._func, 'running'):
+        call._func.running = defaultdict(set)
+    running = call._func.running['']
+    running_in_domain = call._func.running[domain]
+
+    while concurrency and len(running) >= concurrency \
+            or per_domain and len(running_in_domain) >= per_domain:
+        await asyncio.wait(running, return_when=asyncio.FIRST_COMPLETED)
+        _clean_tasks(running)
+        _clean_tasks(running_in_domain)
+
+    this = asyncio.ensure_future(call())
+    running.add(this)
+    running_in_domain.add(this)
+    return await this
+
+
+def _clean_tasks(running):
+    for task in list(running):
+        if task.done():
+            running.remove(task)
