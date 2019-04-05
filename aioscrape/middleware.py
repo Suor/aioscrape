@@ -59,7 +59,7 @@ async def retry(call, tries=10, codes=RETRY_CODES, errors=RETRY_ERRORS, timeout=
         try:
             res = await call()
             if res.status in codes:
-                raise RetryCode(res.message)
+                raise RetryCode(res.reason)
             return res
         except errors as e:
             if on_error:
