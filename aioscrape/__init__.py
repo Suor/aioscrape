@@ -40,6 +40,35 @@ def settings(**values):
 settings.get = lambda param, default=None: SETTINGS.get().get(param, default)
 
 
+def settings_middleware(what, *, after=None, before=None):
+    assert not (after and before), "Should use either after or before param"
+
+    if callable(what):
+        what = [what]
+
+    middleware = settings.get('middleware', [])
+    i = _get_index(middleware, after or before)
+    if after:
+        i += 1
+    return settings(middleware=middleware[:i] + what + middleware[i:])
+settings.middleware = settings_middleware
+
+
+def _get_index(middleware, name):
+    for i, func in enumerate(middleware):
+        if _get_name(func) == name:
+            return i
+
+from funcy import fallback
+
+def _get_name(func):
+    return fallback(
+        lambda: func.__closure__[1].cell_contents.__name__,
+        lambda: func.__name__,
+        lambda: func.__class__.__name__,
+    )
+
+
 async def with_session(coro):
     """
     Automatically creates aiohttp session around coro.
