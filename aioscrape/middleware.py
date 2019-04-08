@@ -48,7 +48,9 @@ class RetryCode(Exception):
     pass
 
 @decorator
-async def retry(call, tries=10, codes=RETRY_CODES, errors=RETRY_ERRORS, timeout=60, on_error=None):
+@aioscrape.configurable_middleware
+async def retry(call, *, tries=10, codes=RETRY_CODES, errors=RETRY_ERRORS,
+                         timeout=60, on_error=None):
     """Makes decorated function retry up to tries times.
        Retries only on specified errors.
        Sleeps timeout or timeout(attempt) seconds between tries."""
@@ -85,7 +87,8 @@ from collections import defaultdict
 from urllib.parse import urlparse
 
 @decorator
-async def limit(call, concurrency=None, per_domain=None):
+@aioscrape.configurable_middleware
+async def limit(call, *, concurrency=None, per_domain=None):
     domain = urlparse(call.url).netloc
 
     if not hasattr(call._func, 'running'):

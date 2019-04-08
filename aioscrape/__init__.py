@@ -8,7 +8,7 @@ from contextvars import ContextVar
 import aiohttp
 import asyncio
 
-from funcy import compose, decorator, project, merge
+from funcy import compose, decorator, project, merge, cut_prefix
 from parsechain import Response
 
 
@@ -86,6 +86,14 @@ async def with_session(coro):
                 return await coro
             finally:
                 SESSION.reset(token)
+
+
+@decorator
+def configurable_middleware(call):
+    prefix = call._func.__name__ + '__'
+    overwrites = {cut_prefix(name, prefix): value
+                  for name, value in SETTINGS.get().items() if name.startswith(prefix)}
+    return call(**overwrites)
 
 
 @decorator
