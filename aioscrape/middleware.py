@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 from funcy import decorator
 from aiohttp.client_exceptions import ClientError
@@ -26,7 +27,11 @@ def filecache(basedir):
     from aiofilecache import FileCache
 
     return cached(cache=FileCache, serializer=PickleSerializer(),
-                  basedir=basedir, timeout=None)
+                  basedir=basedir, timeout=None, key_builder=_key_builder)
+
+def _key_builder(func, url, *args, **kwargs):
+    url = re.sub(r'#.*$', '', url)
+    return (func.__module__ or '') + func.__name__ + url
 
 
 class ValidateError(Exception):
