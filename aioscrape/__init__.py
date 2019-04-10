@@ -110,9 +110,9 @@ compose_wrap.cache = {}
 
 
 @compose_wrap('middleware')
-async def fetch(url, *, headers=None, proxy=None):
+async def fetch(url, *, headers=None, proxy=None, timeout=None):
     session = SESSION.get()
-    async with session.get(url, headers=headers, proxy=proxy) as response:
+    async with session.get(url, headers=headers, proxy=proxy, timeout=None) as response:
         body = await response.text()
         return Response(
             method=response.method, url=str(response.url), body=body,
