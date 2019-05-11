@@ -1,3 +1,4 @@
+from .version import __version__, VERSION
 import sys
 if sys.version_info < (3, 7):
     import aiocontextvars

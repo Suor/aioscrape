@@ -1,11 +1,15 @@
 from setuptools import setup
 
 
+version = {}
+with open("aioscrape/version.py") as fp:
+    exec(fp.read(), version)
+
 README = open('README.rst').read()
 
 setup(
     name='aioscrape',
-    version='0.0.1',
+    version=version['__version__'],
     author='Alexander Schepanovski',
     author_email='suor.web@gmail.com',
 
