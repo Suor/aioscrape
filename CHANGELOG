@@ -1,2 +1,13 @@
+0.0.2
+- allow configuring middleware params
+- added @retry(), @limit and @log_fetch() middlewares
+- added settings.middleware() and settings.get()
+- support proxy and timeout in fetch()
+- added fetchall()
+- added save alias
+- require aiocontextvars
+- added [cache] extra requires
+- added version to package
+
 0.0.1
 - initial version
