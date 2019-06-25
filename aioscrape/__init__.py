@@ -7,6 +7,7 @@ from inspect import signature
 from contextlib import contextmanager
 from contextvars import ContextVar
 import aiohttp
+from aiohttp.helpers import sentinel
 import asyncio
 
 from funcy import compose, decorator, project, merge, cut_prefix
@@ -111,9 +112,9 @@ compose_wrap.cache = {}
 
 
 @compose_wrap('middleware')
-async def fetch(url, *, headers=None, proxy=None, timeout=None):
+async def fetch(url, *, headers=None, proxy=None, timeout=sentinel):
     session = SESSION.get()
-    async with session.get(url, headers=headers, proxy=proxy, timeout=None) as response:
+    async with session.get(url, headers=headers, proxy=proxy, timeout=timeout) as response:
         body = await response.text()
         return Response(
             method=response.method, url=str(response.url), body=body,
