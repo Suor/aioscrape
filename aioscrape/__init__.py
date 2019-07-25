@@ -10,7 +10,7 @@ import aiohttp
 from aiohttp.helpers import sentinel
 import asyncio
 
-from funcy import compose, decorator, project, merge, cut_prefix
+from funcy import compose, decorator, project, merge, cut_prefix, compact
 from parsechain import Response
 
 
@@ -22,6 +22,8 @@ SETTINGS = ContextVar('settings', default={})
 SESSION = ContextVar('session')
 SESSION_PARAMS = [p.name for p in signature(aiohttp.ClientSession).parameters.values()
                          if p.kind == p.KEYWORD_ONLY]
+# Delay these to make them overwritable
+SESSION_PARAMS.remove('headers')
 
 
 def run(coro):
@@ -113,6 +115,9 @@ compose_wrap.cache = {}
 
 @compose_wrap('middleware')
 async def fetch(url, *, headers=None, proxy=None, timeout=sentinel):
+    default_headers = settings.get('headers', {})
+    headers = compact(merge(default_headers, headers or {}))
+
     session = SESSION.get()
     async with session.get(url, headers=headers, proxy=proxy, timeout=timeout) as response:
         body = await response.text()
