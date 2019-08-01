@@ -37,37 +37,35 @@ def _key_builder(func, url, *args, **kwargs):
 class ValidateError(Exception):
     pass
 
+FAIL_CODES = {503}
+
 @decorator
-async def validate(call, validator=None):
+async def validate(call, validator=None, fail_codes=FAIL_CODES):
     result = await call()
-    validator = aioscrape.settings.get('validator')
+
+    fail_codes = aioscrape.settings.get('fail_codes', fail_codes)
+    if result.status in fail_codes:
+        raise ValidateError(f'{result.status} {result.reason}')
+
+    validator = aioscrape.settings.get('validator', validator)
     if validator and not validator(result):
         raise ValidateError
+
     return result
 
 
-RETRY_CODES = {503}
 RETRY_ERRORS = (ClientError, asyncio.TimeoutError, ValidateError)
-
-class RetryCode(Exception):
-    pass
 
 @decorator
 @aioscrape.configurable_middleware
-async def retry(call, *, tries=10, codes=RETRY_CODES, errors=RETRY_ERRORS,
-                         timeout=60, on_error=None):
+async def retry(call, *, tries=10, errors=RETRY_ERRORS, timeout=60, on_error=None):
     """Makes decorated function retry up to tries times.
        Retries only on specified errors.
        Sleeps timeout or timeout(attempt) seconds between tries."""
     errors = _ensure_exceptable(errors)
-    if codes:
-        errors += (RetryCode,)
     for attempt in range(tries):
         try:
-            res = await call()
-            if res.status in codes:
-                raise RetryCode(res.reason)
-            return res
+            return await call()
         except errors as e:
             if on_error:
                 message = f'{e.__class__.__name__}: {e}' if str(e) else e.__class__.__name__
