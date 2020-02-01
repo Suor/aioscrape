@@ -113,7 +113,13 @@ def compose_wrap(call, param):
 compose_wrap.cache = {}
 
 
+@decorator
+def adhoc_session(call):
+    return with_session(call())
+
+
 @compose_wrap('middleware')
+@adhoc_session
 async def fetch(url, *, headers=None, proxy=None, timeout=sentinel):
     default_headers = settings.get('headers', {})
     headers = compact(merge(default_headers, headers or {}))
@@ -129,6 +135,7 @@ async def fetch(url, *, headers=None, proxy=None, timeout=sentinel):
 
 
 # TODO: make an async generator?
+@adhoc_session
 def fetchall(urls):
     return asyncio.gather(*map(fetch, urls))
 
